@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    ports:
+      - "7777:7777"
+
+    depends_on:
+      - mongo
+
+    environment:
+      PORT: 7777
+      MONGO_URI: mongodb://admin:admin123@mongo:27017/mydb?authSource=admin
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: pnpm dev
+
+  mongo:
+    image: mongo
+
+    ports:
+      - "27017:27017"
+
+    command: ["mongod", "--auth", "--bind_ip_all"]
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
